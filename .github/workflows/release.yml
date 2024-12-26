@@ -19,7 +19,9 @@ jobs:
         sudo apt-get install -y 'texlive-*'
 
     - name: Build project
-      run: make
+      run: |
+        make
+        ls -l
 
     - name: Create GitHub Release
       id: create_release
@@ -40,7 +42,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: '*.pdf'
+        asset_path: './*.pdf'
         asset_name: '*.pdf'
         asset_content_type: application/pdf
 
@@ -50,6 +52,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: '*cheatsheet*.png'
+        asset_path: './*cheatsheet*.png'
         asset_name: '*cheatsheet*.png'
         asset_content_type: image/png
