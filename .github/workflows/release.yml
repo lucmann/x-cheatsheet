@@ -15,7 +15,7 @@ jobs:
 
     - name: Cache TeX Live packages
       id: cache-texlive
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: /usr/local/texlive
         key: texlive-${{ runner.os }}-${{ hashFiles('**/texlive-*') }}
@@ -57,16 +57,18 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
+        upload_url="${{ steps.create_release.outputs.upload_url }}"
         for file in ./*.pdf; do
           echo "Uploading $file..."
-          gh release upload ${{ github.event.release.tag_name }} "$file" --clobber
+          gh release upload "$upload_url" "$file" --clobber
         done
 
     - name: Upload PNG Release Asset
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
+        upload_url="${{ steps.create_release.outputs.upload_url }}"
         for file in ./*cheatsheet*.png; do
           echo "Uploading $file..."
-          gh release upload ${{ github.event.release.tag_name }} "$file" --clobber
+          gh release upload "$upload_url" "$file" --clobber
         done
