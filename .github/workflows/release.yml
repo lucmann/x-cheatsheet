@@ -13,10 +13,25 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Install dependencies
+    - name: Cache TeX Live packages
+      id: cache-texlive
+      uses: actions/cache@v2
+      with:
+        path: /usr/local/texlive
+        key: texlive-${{ runner.os }}-${{ hashFiles('**/texlive-*') }}
+        restore-keys: |
+          texlive-${{ runner.os }}-
+
+    - name: Install TeX Live dependencies
+      if: steps.cache-texlive.outputs.cache-hit != 'true'
       run: |
         sudo apt-get update
         sudo apt-get install -y 'texlive-*'
+
+    - name: Install gh # GitHub CLI used to upload release assets
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y gh
 
     - name: Build project
       run: |
@@ -36,22 +51,22 @@ jobs:
         draft: false
         prerelease: false
 
+    # Upload PDF and PNG files as release assets in a loop
+    # Due to the lack of support for wildcards in the `actions/upload-release-asset` action
     - name: Upload PDF Release Asset
-      uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: './*.pdf'
-        asset_name: '*.pdf'
-        asset_content_type: application/pdf
+      run: |
+        for file in ./*.pdf; do
+          echo "Uploading $file..."
+          gh release upload ${{ steps.create_release.outputs.upload_url }} "$file" --clobber
+        done
 
     - name: Upload PNG Release Asset
-      uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: './*cheatsheet*.png'
-        asset_name: '*cheatsheet*.png'
-        asset_content_type: image/png
+      run: |
+        for file in ./*cheatsheet*.png; do
+          echo "Uploading $file..."
+          gh release upload ${{ steps.create_release.outputs.upload_url }} "$file" --clobber
+        done
