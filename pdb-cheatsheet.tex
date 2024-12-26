@@ -19,13 +19,20 @@
 \usepackage{nopageno}
 \usepackage[cm]{fullpage}
 \usepackage{multicol}
+\setlength{\columnsep}{1cm} % Adjust the column space here
 \usepackage[hang,flushmargin]{footmisc}
 \usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{fancyhdr}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage[top=2cm, bottom=2cm, left=1cm, right=1cm, headheight=15pt, headsep=20pt]{geometry}
 
 %custom commands and config
 \newcommand{\theauthor}{Florian Preinstorfer (\href{mailto:nblock@archlinux.us}{nblock@archlinux.us})}
 \newcommand{\theversion}{1.2}
 \newcommand{\keystroke}[1]{$<$#1$>$}
+\newcommand{\blacksubsection}[1]{\subsection{\colorbox{black}{\makebox[\linewidth][c]{\textcolor{white}{#1}}}}}
 \parindent=0cm
 \parskip=1mm
 \def\eqlistlabel#1{\bfseries#1}
@@ -37,55 +44,55 @@
   pdfstartview={FitH}
 }
 
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[C]{\large{%
+    \colorbox{black}{\makebox[\linewidth][c]{\textcolor{white}{\bfseries Python Debugger Cheatsheet - \thepage}}}}}
+\fancyfoot[C]{\small{%
+    Author: \theauthor~--- version \theversion~--- license \href{https://creativecommons.org/licenses/by-nc-sa/3.0}{cc-by-nc-sa 3.0}\\
+    See \url{https://github.com/nblock/pdb-cheatsheet} for more information.
+}}
+\renewcommand{\headrulewidth}{0pt} % Remove the horizontal line at the top
+
+\setlist[description]{style=nextline, noitemsep} % noitemsep removes whitespace between list items
+
 \begin{document}
-  \begin{center}
-    \begin{minipage}[c]{0.15\textwidth}
-      \includegraphics[width=3cm]{python-logo}
-    \end{minipage}
-    \begin{minipage}[c]{0.43\textwidth}
-      \huge \bfseries Python Debugger Cheatsheet
-    \end{minipage}
-    \begin{minipage}[r]{0.15\textwidth}
-      \includegraphics[width=3cm]{python-logo}
-    \end{minipage}
-    \vspace{1cm}
-  \end{center}
-
-  \begin{multicols}{2}
-    \subsection{Getting started}
-      \begin{eqlist}
-        \item[{\bfseries import pdb;pdb.set\_trace()}] start pdb from within a script
+  \begin{multicols}{3}
+    \blacksubsection{Getting started}
+      \begin{description}
+        \item[{\bfseries import pdb;pdb.set\_trace()}]
+             start pdb from within a script
         \item[{\bfseries python -m pdb \keystroke{file.py}}] start pdb from the commandline
-      \end{eqlist}
+      \end{description}
 
-    \subsection{Basics}
-      \begin{eqlist}
+    \blacksubsection{Basics}
+      \begin{description}
         \item[h(elp)] print available commands
         \item[h(elp) \textit{command}] print help about \textit{command}
         \item[q(quit)] quit debugger
-      \end{eqlist}
+      \end{description}
 
-    \subsection{Examine}
-      \begin{eqlist}
+    \blacksubsection{Examine}
+      \begin{description}
         \item[p(rint) \textit{expr}] print the value of \textit{expr}
         \item[pp \textit{expr}] pretty-print the value of \textit{expr}
         \item[w(here)] print current position (including stack trace)
         \item[l(ist)] list 11 lines of code around the current line
         \item[l(ist) \textit{first}, \textit{last}] list from \textit{first} to \textit{last} line number
         \item[a(rgs)] print the args of the current function
-      \end{eqlist}
+      \end{description}
 
-    \subsection{Miscellaneous}
-      \begin{eqlist}
+    \blacksubsection{Miscellaneous}
+      \begin{description}
         \item[!\textit{stmt}] treat \textit{stmt} as a Python statement instead of a pdb command
         \item[alias \textit{map} \textit{stmt}] map Python statement as a map command
         \item[alias \textit{map} <\textit{arg1} \ldots> \textit{stmt}] pass arguments to Python statement. \\
             \textit{stmt} includes \%1, \%2, \ldots literals.
-      \end{eqlist}
+      \end{description}
       Save pdb commands to local \keystroke{./.pdbrc} file for repetitive access.
 
-    \subsection{Movement}
-      \begin{eqlist}
+    \blacksubsection{Movement}
+      \begin{description}
         \item[\keystroke{ENTER}] repeat the last command
         \item[n(ext)] execute the current statement (step over)
         \item[s(tep)] execute and step into function
@@ -95,10 +102,10 @@
         \item[d(own)] move one level down in the stack trace
         \item[until] continue execution until the end of a loop or until the set line
         \item[j(ump)] set the next line that will be executed (local frame only)
-      \end{eqlist}
+      \end{description}
 
-    \subsection{Breakpoints}
-      \begin{eqlist}
+    \blacksubsection{Breakpoints}
+      \begin{description}
         \item[b(reak)] show all breakpoints with its \textit{number}
         \item[b(reak) \textit{lineno}] set a breakpoint at \textit{lineno}
         \item[b(reak) \textit{lineno}, \textit{cond}] stop at breakpoint \textit{lineno} if Python condition \textit{cond} holds, e.g.\ i==42
@@ -108,12 +115,7 @@
         \item[disable \textit{number}] disable breakpoint \textit{number}
         \item[enable \textit{number}] enable breakpoint \textit{number}
         \item[clear \textit{number}] delete breakpoint \textit{number}
-      \end{eqlist}
+      \end{description}
 
-    \small{%
-    \hrule
-    Author: \theauthor~--- version \theversion~--- license \href{https://creativecommons.org/licenses/by-nc-sa/3.0}{cc-by-nc-sa 3.0}\\
-    See \url{https://github.com/nblock/pdb-cheatsheet} for more information.
-    }
   \end{multicols}
 \end{document}

@@ -29,3 +29,8 @@
 
 # tags
 tags
+
+# Output
+*.pdf
+*.png
+!python-logon.png

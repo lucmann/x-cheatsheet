@@ -1,0 +1,218 @@
+%about: A cheatsheet for Python Debugger
+%author: Florian Preinstorfer <nblock@archlinux.org>
+%url: https://github.com/nblock/pdb-cheatsheet
+%license: creative commons by-nc-sa
+%credits:
+%  - Christoph Hermes (patches)
+%  - LaTeX template based on https://github.com/mtdavidson/emacs-cheatsheet
+%  - http://docs.python.org/library/pdb.html
+%  - https://anilattech.wordpress.com/2011/06/29/python-debugger-pdb-cheatsheet
+%  - https://pythonconquerstheuniverse.wordpress.com/2009/09/10/debugging-in-python
+%  - http://www.doughellmann.com/PyMOTW/pdb/
+\documentclass[10pt,landscape,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{eqlist}
+\usepackage[pdftex,hidelinks]{hyperref}
+\usepackage{nopageno}
+\usepackage[cm]{fullpage}
+\usepackage{multicol}
+\setlength{\columnsep}{1cm} % Adjust the column space here
+\usepackage[hang,flushmargin]{footmisc}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{fancyhdr}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage[top=2cm, bottom=2cm, left=1cm, right=1cm, headheight=15pt, headsep=20pt]{geometry}
+
+%custom commands and config
+\newcommand{\theauthor}{Luc Ma (\href{mailto:onion0709@gmail.com}{onion0709@gmail.com})}
+\newcommand{\theversion}{1.0}
+\newcommand{\keystroke}[1]{$<$#1$>$}
+\newcommand{\blacksubsection}[1]{\subsection{\colorbox{black}{\makebox[\linewidth][c]{\textcolor{white}{#1}}}}}
+\parindent=0cm
+\parskip=1mm
+\def\eqlistlabel#1{\bfseries#1}
+\setcounter{secnumdepth}{-1}
+\hypersetup{%
+  pdftitle={Python Debugger Cheatsheet},
+  pdfauthor={\theauthor},
+  pdfkeywords={Python, Debugger, Cheatsheet, pdb, ipdb},
+  pdfstartview={FitH}
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[C]{\large{%
+    \colorbox{black}{\makebox[\linewidth][c]{\textcolor{white}{\bfseries GNU Debugger (GDB) Cheatsheet - \thepage}}}}}
+\fancyfoot[C]{\small{%
+    Author: \theauthor~--- version \theversion~--- license \href{https://creativecommons.org/licenses/by-nc-sa/3.0}{cc-by-nc-sa 3.0}\\
+    See \url{https://github.com/lucmann/x-cheatsheet} for more information.
+}}
+\renewcommand{\headrulewidth}{0pt} % Remove the horizontal line at the top
+\setlist[description]{style=nextline, noitemsep} % noitemsep removes whitespace between list items
+
+\begin{document}
+  \begin{multicols}{3}
+    \blacksubsection{Running}
+      \begin{description}
+        \item[{\bfseries \$gdb \textit{<program> [core dump]}}] Start gdb (with optional core dump)
+        \item[{\bfseries \$gdb --args \textit{<program> <args...>}}] Start gdb and pass arguments
+        \item[{\bfseries \$gdb --pid \textit{<pid>}}] Start gdb and attach to process
+        \item[set args \textit{<args...>}] Set arguments for the program
+        \item[r(un)] Run the program being debugged
+        \item[k(ill)] Kill the program being debugged
+      \end{description}
+
+    \blacksubsection{Breakpoints}
+      \begin{description}
+        \item[b(reak) \textit{<where>}] Set a new breakpoint
+        \item[d(elete) \textit{<breakpoint\#>}] Remove a breakpoint
+        \item[clear] Delete all breakpoints
+        \item[en(able) \textit{<breakpoint\#>}] Enable a disabled breakpoint
+        \item[dis(able) \textit{<breakpoint\#>}] Disable a breakpoint
+      \end{description}
+
+    \blacksubsection{Watchpoints}
+      \begin{description}
+        \item[w(atch) \textit{<where>}] Set a new watchpoint
+        \item[delete/enable/disable \textit{<watchpoint\#>}] Like breakpoints
+      \end{description}
+
+    \blacksubsection{<where>}
+      \begin{description}
+        \item[\textit{function\_name}] Break/watch the named function
+        \item[\textit{line\_number}] Break/watch the line number in the current file
+        \item[\textit{file:line\_number}]  Break/watch the line number in the specified file 
+      \end{description}
+
+    \blacksubsection{Conditions}
+      \begin{description}
+        \item[break/watch \textit{<where>} if \textit{<condition>}]
+              Break/watch at the given location if the condition is true. Conditions may be
+              almost C expression that evaluate to true or false
+        \item[condition \textit{<breakpoint\#>} \textit{<condition>}]
+              Set/change the condition for an existing break- or watchpoint
+        \item[]   
+      \end{description}
+
+    \blacksubsection{Movement}
+      \begin{description}
+        \item[n(ext)] execute the current statement (step over)
+        \item[s(tep)] execute and step into function
+        \item[r(eturn)] continue execution until the current function returns
+        \item[c(ontinue)] continue execution until a breakpoint is encountered
+        \item[u(p)] move one level up in the stack trace
+        \item[d(own)] move one level down in the stack trace
+        \item[u(ntil)] continue execution until the end of a loop or until the set line
+        \item[j(ump)] set the next line that will be executed (local frame only)
+      \end{description}
+
+    \blacksubsection{Examining the stack}
+      \begin{description}
+        \item[\parbox{4cm}{ \vspace{0.1cm} b(ack)t(race) \\ where \vspace{0.1cm}}] Show call stack
+        \item[\parbox{4cm}{ \vspace{0.1cm} backtrace full \\ where full \vspace{0.1cm}}] Show call stack, also print the local variables in each frame
+        \item[frame \textit{<frame\#>}] Select the stack frame to operate on
+      \end{description}
+
+    \blacksubsection{Stepping}
+      \begin{description}
+        \item[s(tep)] Go to next instruction (source line), diving into function
+        \item[n(ext)] Go to next instruction (source line), but don't dive into functions
+        \item[fin(ish)] Continue until the current function returns
+        \item[c(ontinue)] Continue normal execution
+        \item[c(ontinue) \textit{<count>}] Continue after skip breakpoints \textit{<count>} times
+      \end{description}
+
+    \blacksubsection{Variables}
+      \begin{description}
+        \item[p(rint)/format \textit{<what>}] Print content of variable/memory/register
+        \item[display/format \textit{<what>}] Like "print", but print the information after each stepping instruction
+        \item[undisplay \textit{<display\#>}] Remove the display with the given number
+        \item[\parbox{6cm}{ \vspace{0.1cm} enable display \textit{<display\#>} \\ disable display \textit{<display\#>} \vspace{0.1cm}}]
+              En- or disable the display with the given number
+      \end{description}
+
+    \blacksubsection{<what>}
+      \begin{description}
+        \item[expression] Almost any C expression, including function calls (must be prefixed with a cast to tell GDB the return value type)
+        \item[file\_name::variable\_name] Content of the variable defined in the named file (static variables)
+        \item[function::variable\_name] Content of the variable defined in the named function (if on the stack)
+        \item[\textit{\{type\}}address] Content at the address, interpreted as being of C type \textit{type}
+        \item[\$register] \parbox{8cm}{Content of named register. Interesing registers: \\
+                                       \textit{\$pc}: program counter\\
+                                       \textit{\$sp}: stack pointer\\
+                                       \textit{\$fp (\$ebp)}: frame pointer\\
+                                       \textit{\$eip}: instruction pointer}
+      \end{description}
+
+    \blacksubsection{Memory}
+      \begin{description}
+        \item[x/nfu \textit{<address>}] \parbox{8cm}{Print the memory at the given address. \\
+                                        \textit{n}: How many units to print (default 1) \\
+                                        \textit{f}: Format specifier (like "print") \\
+                                        \textit{u}: Unit}
+      \end{description}
+
+    \blacksubsection{Format}
+      \begin{description}
+        \item[a] Pointer
+        \item[c] Read as integer, print as character
+        \item[d] Integer, signed decimal
+        \item[f] Floating point number
+        \item[o] Integer, octal
+        \item[s] Try to treat as C string
+        \item[t] Integer, binary (t = "two")
+        \item[u] Integer, unsigned decimal
+        \item[x] Integer, hexadecimal
+      \end{description}
+
+    \blacksubsection{Threads}
+      \begin{description}
+        \item[thread \textit{<thread\#>}] Choose thread to operate on
+      \end{description}
+
+    \blacksubsection{Manipulating the program}
+      \begin{description}
+        \item[set var \textit{<variable\_name>}=\textit{<value>}] Change the content of a variable to the given value
+        \item[return \textit{<expression>}] Force the current function to return immediately, passing the given value
+      \end{description}
+
+    \blacksubsection{Sources}
+      \begin{description}
+        \item[dir(ectory) \textit{<directories>}] Add \textit{<directories>} to the source file search path, \textit{<directories>} can be separated by colons
+        \item[\parbox{6cm}{ \vspace{0.1cm} list \\ list \textit{<filename>:<function>} \\ list \textit{<filename>:<line\_number>} \\ list \textit{<first>,<last>}\vspace{0.1cm}}]
+              Show the current or given source code snippet. The \textit{<filename>} can be omitted. If \textit{<last>} is omitted, 10 lines are shown.
+        \item[set listsize \textit{<count>}] Set how many lines to show in "list"
+      \end{description}
+
+    \blacksubsection{Signals}
+      \begin{description}
+        \item[handle \textit{<signal>} \textit{<options>}]
+              \parbox{8cm}{ \vspace{0.1cm}Set how to handle signals. \textit{<options>} can be: \\
+                                       \textit{(no)print}: (Don't) print a message when the signal occurs\\
+                                       \textit{(no)stop}: (Don't) stop the program when the signal occurs\\
+                                       \textit{(no)pass}: (Don't) pass the signal to the program}
+      \end{description}
+
+    \blacksubsection{Informations}
+      \begin{description}
+        \item[\parbox{6cm}{ \vspace{0.1cm} disassemble \\ disassemble \textit{<where>} \vspace{0.1cm}}]
+              disassemble the current function or the given location
+        \item[i(nfo) args] Print the arguments to the function of the current stack frame
+        \item[i(nfo) b(reakpoints)] Print informations about the break- and watchpoints
+        \item[i(nfo) display] Print informations about "displays"
+        \item[i(nfo) locals] Print the local variables in the currently selected stack frame
+        \item[i(nfo) sharedlibrary] List loaded shared libraries
+        \item[i(nfo) signals] List all signals and how they are currently handled
+        \item[i(nfo) threads] List all threads
+        \item[show directories] Print all directories in which GDB searches for source files
+        \item[show listsize] Print how many are shown in "list" command
+        \item[whatis \textit{variable\_name}] Print type of named variable
+      \end{description}
+
+  \end{multicols}
+\end{document}
