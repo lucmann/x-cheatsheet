@@ -13,25 +13,21 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
+    # It takes a while to install TeX Live packages, so we cache them
     - name: Cache TeX Live packages
       id: cache-texlive
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
-        path: /usr/local/texlive
-        key: texlive-${{ runner.os }}-${{ hashFiles('**/texlive-*') }}
+        path: /var/cache/apt
+        key: ${{ runner.os }}-apt-${{ hashFiles('**/apt-packages.txt') }}
         restore-keys: |
-          texlive-${{ runner.os }}-
+          ${{ runner.os }}-apt-
 
     - name: Install TeX Live dependencies
       if: steps.cache-texlive.outputs.cache-hit != 'true'
       run: |
         sudo apt-get update
-        sudo apt-get install -y 'texlive-*'
-
-    - name: Install gh # GitHub CLI used to upload release assets
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y gh
+        sudo apt-get install -y 'texlive-*' gh
 
     - name: Build project
       run: |
