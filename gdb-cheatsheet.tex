@@ -101,14 +101,16 @@
 
     \blacksubsection{Movement}
       \begin{description}
-        \item[n(ext)] execute the current statement (step over)
-        \item[s(tep)] execute and step into function
-        \item[r(eturn)] continue execution until the current function returns
-        \item[c(ontinue)] continue execution until a breakpoint is encountered
-        \item[u(p)] move one level up in the stack trace
-        \item[d(own)] move one level down in the stack trace
+        \item[s(tep)] Go to next instruction (source line), diving into function
+        \item[n(ext)] Go to next instruction (source line), but don't dive into functions
+        \item[\parbox{4cm}{ \vspace{0.1cm} fin(ish) \\ return \vspace{0.1cm}}] Continue until the current function returns
+        \item[j(ump) \textit{<where>}] Continue program being debugged at the specified line or \textit{address}, where
+                                       \textit{address} is an expression for an address to start at
+        \item[c(ontinue)] Continue normal execution
+        \item[c(ontinue) \textit{<count>}] Continue after skip breakpoints \textit{<count>} times
         \item[u(ntil)] continue execution until the end of a loop or until the set line
-        \item[j(ump)] set the next line that will be executed (local frame only)
+        \item[up] move one level up in the stack trace
+        \item[down] move one level down in the stack trace
       \end{description}
 
     \blacksubsection{Examining the stack}
@@ -116,15 +118,6 @@
         \item[\parbox{4cm}{ \vspace{0.1cm} b(ack)t(race) \\ where \vspace{0.1cm}}] Show call stack
         \item[\parbox{4cm}{ \vspace{0.1cm} backtrace full \\ where full \vspace{0.1cm}}] Show call stack, also print the local variables in each frame
         \item[frame \textit{<frame\#>}] Select the stack frame to operate on
-      \end{description}
-
-    \blacksubsection{Stepping}
-      \begin{description}
-        \item[s(tep)] Go to next instruction (source line), diving into function
-        \item[n(ext)] Go to next instruction (source line), but don't dive into functions
-        \item[fin(ish)] Continue until the current function returns
-        \item[c(ontinue)] Continue normal execution
-        \item[c(ontinue) \textit{<count>}] Continue after skip breakpoints \textit{<count>} times
       \end{description}
 
     \blacksubsection{Variables}
